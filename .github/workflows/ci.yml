@@ -1,0 +1,19 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+      # Quality gate: fails the build if accuracy drops below the thresholds in eval/run_eval.py
+      - run: python -m eval.run_eval
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: eval/results/

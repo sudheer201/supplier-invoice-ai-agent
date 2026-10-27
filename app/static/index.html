@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AP Review Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f2ee; --panel: #ffffff; --ink: #1c2230; --muted: #6b7180; --line: #e2dfd8;
+    --accent: #1f3a5f; --ok: #2f7d4f; --ok-bg: #e6f2ea; --warn: #9a6300; --warn-bg: #fbf0dc;
+    --bad: #a33a2b; --bad-bg: #f8e4e0; --info-bg: #e8edf5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171d; --panel: #1c2028; --ink: #e6e8ee; --muted: #9aa0ad; --line: #2c313b;
+      --accent: #8fb3e0; --ok: #6fcf97; --ok-bg: #1c3326; --warn: #f2c26b; --warn-bg: #3a2f17;
+      --bad: #f08a7a; --bad-bg: #3d2320; --info-bg: #222b3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "IBM Plex Sans", system-ui, sans-serif; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  header { padding: 20px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+  header .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 0; }
+  h1 { font-size: 18px; margin: 0; letter-spacing: .02em; }
+  h1 span { color: var(--muted); font-weight: 400; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 28px 0 10px; font-weight: 600; }
+  .key input { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); width: 150px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .tile .v { font-size: 22px; font-weight: 600; }
+  .tile .l { font-size: 12px; color: var(--muted); }
+  .drop { margin-top: 10px; border: 1.5px dashed var(--line); border-radius: 8px; padding: 22px; text-align: center; background: var(--panel); cursor: pointer; }
+  .drop.over { border-color: var(--accent); }
+  .drop small { color: var(--muted); display: block; }
+  #toast { margin-top: 8px; min-height: 20px; font-size: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--warn); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+  .card-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .card-head b { font-size: 16px; }
+  .risk { font-size: 13px; padding: 2px 8px; border-radius: 99px; background: var(--warn-bg); color: var(--warn); white-space: nowrap; }
+  .risk.high { background: var(--bad-bg); color: var(--bad); }
+  .meta { color: var(--muted); font-size: 13px; }
+  ul.issues { list-style: none; padding: 0; margin: 10px 0; }
+  ul.issues li { padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; display: flex; gap: 8px; align-items: baseline; }
+  .chip { font-size: 11px; font-family: "IBM Plex Mono", monospace; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .chip.critical { background: var(--bad-bg); color: var(--bad); }
+  .chip.warning { background: var(--warn-bg); color: var(--warn); }
+  .chip.info { background: var(--info-bg); color: var(--accent); }
+  .summary { background: var(--bg); border-radius: 6px; padding: 8px 10px; font-size: 14px; }
+  details { margin-top: 8px; font-size: 13px; }
+  details table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+  details td, details th { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); }
+  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .actions input { flex: 1 1 140px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit; }
+  button { font: inherit; padding: 7px 14px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; font-weight: 500; }
+  .approve { background: var(--ok); color: #fff; }
+  .reject { background: transparent; border-color: var(--bad); color: var(--bad); }
+  .empty { color: var(--muted); padding: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  .tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  table.list { border-collapse: collapse; width: 100%; font-size: 14px; }
+  table.list th, table.list td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  table.list th { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .st { font-size: 12px; padding: 2px 8px; border-radius: 99px; }
+  .st-auto_approved, .st-approved { background: var(--ok-bg); color: var(--ok); }
+  .st-pending_review { background: var(--warn-bg); color: var(--warn); }
+  .st-rejected, .st-error { background: var(--bad-bg); color: var(--bad); }
+  .st-processing { background: var(--info-bg); color: var(--accent); }
+  footer { color: var(--muted); font-size: 12px; padding: 30px 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>AP Review Desk <span>· invoice agent</span></h1>
+    <label class="key meta">API key <input id="apikey" type="password" placeholder="optional"></label>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="tiles" id="tiles"></div>
+
+  <h2>Upload invoice</h2>
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept="application/pdf" multiple hidden>
+    <strong>Drop PDF invoices here</strong>
+    <small>or click to choose · Extractor → Validator → Risk analyst → Supervisor</small>
+  </label>
+  <div id="toast"></div>
+
+  <h2>Needs your decision</h2>
+  <div id="queue"></div>
+
+  <h2>All invoices</h2>
+  <div class="tablewrap">
+    <table class="list">
+      <thead><tr><th>#</th><th>Invoice</th><th>Vendor</th><th>PO</th><th>Total</th><th>Risk</th><th>Status</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <footer>Decisions are made by deterministic policy rules; the LLM risk analyst can only escalate. Every action is written to the audit log.</footer>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = (v, c = "USD") => v == null ? "–" : `${c} ${Number(v).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+function getKey() { try { return localStorage.getItem("ap_key") || ""; } catch { return ""; } }
+$("#apikey").value = getKey();
+$("#apikey").addEventListener("change", e => { try { localStorage.setItem("ap_key", e.target.value); } catch {} refresh(); });
+
+async function api(path, opts = {}) {
+  const headers = Object.assign({}, opts.headers || {});
+  const k = $("#apikey").value; if (k) headers["x-api-key"] = k;
+  const r = await fetch(path, Object.assign({}, opts, { headers }));
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(typeof body.detail === "string" ? body.detail : (body.detail?.message || r.statusText));
+  return body;
+}
+
+function toast(msg, ok = true) { $("#toast").innerHTML = `<span style="color:var(${ok ? "--ok" : "--bad"})">${esc(msg)}</span>`; }
+
+async function renderMetrics() {
+  const m = await api("/metrics");
+  const s = m.invoices_by_status || {};
+  const total = Object.values(s).reduce((a, b) => a + b, 0);
+  const tiles = [
+    [total, "invoices processed"],
+    [`${Math.round(m.straight_through_rate * 100)}%`, "straight-through (no human)"],
+    [s.pending_review || 0, "waiting for review"],
+    [`$${(m.avg_cost_per_invoice_usd || 0).toFixed(4)}`, "LLM cost / invoice"],
+    [`${m.p95_latency_ms} ms`, "p95 LLM latency"],
+  ];
+  $("#tiles").innerHTML = tiles.map(([v, l]) => `<div class="tile"><div class="v mono">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("");
+}
+
+function cardHtml(inv) {
+  const x = inv.extracted_json || {};
+  const risk = inv.risk_json || {};
+  const issues = (inv.issues_json || []).map(i =>
+    `<li><span class="chip ${esc(i.severity)}">${esc(i.code)}</span><span>${esc(i.message)}</span></li>`).join("");
+  const lines = (x.line_items || []).map(l =>
+    `<tr><td class="mono">${esc(l.sku)}</td><td>${esc(l.description)}</td><td>${esc(l.quantity)}</td><td>${esc(l.unit_price)}</td><td>${esc(l.amount)}</td></tr>`).join("");
+  return `<div class="card" id="c${inv.id}">
+    <div class="card-head">
+      <div><b>${esc(inv.vendor_name || inv.file_name)}</b>
+        <div class="meta mono">${esc(inv.invoice_number)} · ${esc(inv.po_number || "no PO")} · ${money(inv.total, inv.currency || "USD")}</div></div>
+      <span class="risk ${risk.risk_score >= 60 ? "high" : ""}">risk ${esc(risk.risk_score ?? "?")}/100</span>
+    </div>
+    <ul class="issues">${issues}</ul>
+    <div class="summary">${esc(risk.summary || "")}</div>
+    <details><summary>Extracted data</summary>
+      <table><tr><th>SKU</th><th>Description</th><th>Qty</th><th>Unit</th><th>Amount</th></tr>${lines}</table>
+      <div class="meta" style="margin-top:6px">Subtotal ${esc(x.subtotal)} · Tax ${esc(x.tax)} · Total ${esc(x.total)} · Bank ${esc(x.bank_account ? "••••" + String(x.bank_account).slice(-4) : "–")}</div>
+    </details>
+    <div class="actions">
+      <input placeholder="Your name" data-f="reviewer">
+      <input placeholder="Comment (why?)" data-f="comment">
+      <button class="approve" data-a="approve" data-id="${inv.id}">Approve</button>
+      <button class="reject" data-a="reject" data-id="${inv.id}">Reject</button>
+    </div>
+  </div>`;
+}
+
+async function renderQueue() {
+  const q = await api("/reviews/pending");
+  $("#queue").innerHTML = q.length ? q.map(cardHtml).join("") : `<div class="empty">Nothing waiting. Clean invoices are approved automatically.</div>`;
+}
+
+async function renderRows() {
+  const rows = await api("/invoices");
+  $("#rows").innerHTML = rows.map(r => `<tr>
+    <td class="mono">${r.id}</td><td class="mono">${esc(r.invoice_number || r.file_name)}</td><td>${esc(r.vendor_name || "–")}</td>
+    <td class="mono">${esc(r.po_number || "–")}</td><td class="mono">${money(r.total, r.currency || "USD")}</td>
+    <td class="mono">${esc(r.risk_score ?? "–")}</td><td><span class="st st-${esc(r.status)}">${esc(r.status.replace("_", " "))}</span></td></tr>`).join("");
+}
+
+async function refresh() {
+  try { await Promise.all([renderMetrics(), renderQueue(), renderRows()]); }
+  catch (e) { toast(e.message, false); }
+}
+
+$("#queue").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-a]"); if (!b) return;
+  const card = b.closest(".card");
+  const reviewer = card.querySelector('[data-f="reviewer"]').value.trim();
+  const comment = card.querySelector('[data-f="comment"]').value.trim();
+  if (!reviewer) { toast("Enter your name before deciding.", false); return; }
+  try {
+    const r = await api(`/reviews/${b.dataset.id}`, { method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ action: b.dataset.a, reviewer, comment }) });
+    toast(`Invoice ${r.invoice_number}: ${r.status}`); refresh();
+  } catch (err) { toast(err.message, false); }
+});
+
+async function upload(files) {
+  for (const f of files) {
+    const fd = new FormData(); fd.append("file", f);
+    toast(`Processing ${f.name}…`);
+    try {
+      const r = await api("/invoices", { method: "POST", body: fd });
+      toast(`${f.name} → ${r.status}${r.issues.length ? " (" + r.issues.map(i => i.code).join(", ") + ")" : ""} in ${r.pipeline_latency_ms} ms`, r.status !== "error");
+    } catch (e) { toast(`${f.name}: ${e.message}`, false); }
+  }
+  refresh();
+}
+$("#file").addEventListener("change", e => upload(e.target.files));
+const drop = $("#drop");
+["dragover", "dragenter"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => upload(e.dataTransfer.files));
+
+refresh();
+</script>
+</body>
+</html>

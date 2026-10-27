@@ -1,0 +1,254 @@
+{
+  "summary": {
+    "mode": "mock",
+    "model": "mock",
+    "scenarios": 14,
+    "passed": 14,
+    "extraction_field_accuracy": 1.0,
+    "decision_accuracy": 1.0,
+    "issue_precision": 1.0,
+    "issue_recall": 1.0,
+    "avg_latency_ms": 36.5,
+    "max_latency_ms": 63.93,
+    "avg_cost_per_invoice_usd": 0.000338,
+    "thresholds": {
+      "extraction_field_accuracy": 0.95,
+      "decision_accuracy": 0.9,
+      "issue_recall": 0.9
+    }
+  },
+  "rows": [
+    {
+      "scenario": "S01_clean_acme",
+      "expected": "auto_approved",
+      "got": "auto_approved",
+      "decision_ok": true,
+      "issues_expected": [],
+      "issues_got": [],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 63.93,
+      "llm_cost_usd": 0.000348,
+      "pass": true
+    },
+    {
+      "scenario": "S02_price_mismatch",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "PRICE_MISMATCH"
+      ],
+      "issues_got": [
+        "PRICE_MISMATCH"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 28.6,
+      "llm_cost_usd": 0.000318,
+      "pass": true
+    },
+    {
+      "scenario": "S03_qty_exceeds_receipt",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "QTY_EXCEEDS_RECEIPT"
+      ],
+      "issues_got": [
+        "QTY_EXCEEDS_RECEIPT"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 32.36,
+      "llm_cost_usd": 0.000322,
+      "pass": true
+    },
+    {
+      "scenario": "S04_total_mismatch",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "TOTAL_MISMATCH"
+      ],
+      "issues_got": [
+        "TOTAL_MISMATCH"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 29.16,
+      "llm_cost_usd": 0.000372,
+      "pass": true
+    },
+    {
+      "scenario": "S05_duplicate",
+      "expected": "rejected",
+      "got": "rejected",
+      "decision_ok": true,
+      "issues_expected": [
+        "DUPLICATE_INVOICE"
+      ],
+      "issues_got": [
+        "DUPLICATE_INVOICE"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 34.08,
+      "llm_cost_usd": 0.000369,
+      "pass": true
+    },
+    {
+      "scenario": "S06_unknown_po",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "PO_NOT_FOUND"
+      ],
+      "issues_got": [
+        "PO_NOT_FOUND"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 25.33,
+      "llm_cost_usd": 0.00032,
+      "pass": true
+    },
+    {
+      "scenario": "S07_blocked_vendor",
+      "expected": "rejected",
+      "got": "rejected",
+      "decision_ok": true,
+      "issues_expected": [
+        "VENDOR_BLOCKED"
+      ],
+      "issues_got": [
+        "VENDOR_BLOCKED"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 40.41,
+      "llm_cost_usd": 0.000315,
+      "pass": true
+    },
+    {
+      "scenario": "S08_bank_account_changed",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "BANK_ACCOUNT_MISMATCH"
+      ],
+      "issues_got": [
+        "BANK_ACCOUNT_MISMATCH"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 32.91,
+      "llm_cost_usd": 0.000329,
+      "pass": true
+    },
+    {
+      "scenario": "S09_prompt_injection",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "PROMPT_INJECTION"
+      ],
+      "issues_got": [
+        "PROMPT_INJECTION"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 44.06,
+      "llm_cost_usd": 0.00036,
+      "pass": true
+    },
+    {
+      "scenario": "S10_high_value",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "HIGH_VALUE"
+      ],
+      "issues_got": [
+        "HIGH_VALUE"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 43.29,
+      "llm_cost_usd": 0.000324,
+      "pass": true
+    },
+    {
+      "scenario": "S11_clean_bright",
+      "expected": "auto_approved",
+      "got": "auto_approved",
+      "decision_ok": true,
+      "issues_expected": [],
+      "issues_got": [],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 45.84,
+      "llm_cost_usd": 0.000345,
+      "pass": true
+    },
+    {
+      "scenario": "S12_po_vendor_mismatch",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "PO_VENDOR_MISMATCH"
+      ],
+      "issues_got": [
+        "PO_VENDOR_MISMATCH"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 32.05,
+      "llm_cost_usd": 0.000321,
+      "pass": true
+    },
+    {
+      "scenario": "S13_unknown_vendor",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "PO_VENDOR_MISMATCH",
+        "VENDOR_NOT_FOUND"
+      ],
+      "issues_got": [
+        "PO_VENDOR_MISMATCH",
+        "VENDOR_NOT_FOUND"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 27.55,
+      "llm_cost_usd": 0.000334,
+      "pass": true
+    },
+    {
+      "scenario": "S14_sku_not_on_po",
+      "expected": "human_review",
+      "got": "human_review",
+      "decision_ok": true,
+      "issues_expected": [
+        "SKU_NOT_ON_PO"
+      ],
+      "issues_got": [
+        "SKU_NOT_ON_PO"
+      ],
+      "field_accuracy": 1.0,
+      "wrong_fields": [],
+      "latency_ms": 31.07,
+      "llm_cost_usd": 0.000362,
+      "pass": true
+    }
+  ]
+}

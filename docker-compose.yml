@@ -1,0 +1,10 @@
+services:
+  invoice-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      # For APP_MODE=aws locally, share your AWS CLI credentials (read-only):
+      # - ~/.aws:/home/appuser/.aws:ro
